@@ -3,7 +3,7 @@
 internal class ConsoleInterface
 {
     private Maze? lastMaze = null;
-    
+
     static readonly string[]?[] args = [
         null,
         ["Generator", "Width", "Height"],
@@ -17,8 +17,8 @@ internal class ConsoleInterface
     {
         "end" => 0,
         "gen" => 1,
-        "wlk" => 2,
-        "prn" => 3,
+        "walk" => 2,
+        "print" => 3,
         "exp" => 4,
         "imp" => 5,
         _ => -1
@@ -36,29 +36,34 @@ internal class ConsoleInterface
 
     public void Run ()
     {
+        Console.ResetColor();
+        Console.Write("> ");
+
+        Console.ForegroundColor = ConsoleColor.Yellow;
         string input = Console.ReadLine()!;
 
-        if (input is "")
+        if (input == "")
         {
             Console.CursorTop--;
             Run();
             return;
         }
 
-        int command;
+        int command = ParseCommand(input);
 
-        if (input.Length != 3 || (command = ParseCommand(input)) == -1)
+        if (command == 0)
+            return;
+
+        if (command == -1)
         {
             Console.Write("Invalid command.\n\n");
             Run();
             return;
         }
 
-        if (command == 0)
-            return;
-
         if (args[command] is null)
         {
+            Console.ResetColor();
             Console.WriteLine(ExecuteCommand(command, []) ?? "Invalid inputs.");
             Console.WriteLine();
             Run();
@@ -66,11 +71,14 @@ internal class ConsoleInterface
         }
 
         string[] argInputs = new string[args[command]!.Length];
-        
+
+        Console.ForegroundColor = ConsoleColor.Cyan;
         foreach (string arg in args[command]!)
             Console.WriteLine(arg + ':');
 
         Console.CursorTop -= argInputs.Length;
+
+        Console.ResetColor();
 
         for (int i = 0; i < argInputs.Length; i++)
         {
